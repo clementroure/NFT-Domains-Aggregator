@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+
+html, body {
+  color: #111827;
+  background-color: #111827;
+}
+
+body::-webkit-scrollbar {
+    width:10px; /* width of the entire scrollbar */
+}
+
+body::-webkit-scrollbar-track {
+background: #111827; /* color of the tracking area */
+}
+
+body::-webkit-scrollbar-thumb {
+background-color: rgba(255, 255, 255, 0.3); /* color of the scroll thumb */
+border-radius: 0px; /* roundness of the scroll thumb */
+border: 0px solid rgb(14, 14, 14); /* creates padding around scroll thumb */
+}
+
+body::-webkit-scrollbar-thumb:hover { 
+background-color: rgbA(255,255,255, 0.4);
+}  
+
+/* Firefox */
+::-moz-selection {
+  background: rgb(39, 168, 227, 0.3);
+  /* color: white; */
+}
+::selection {
+  background: rgb(39, 168, 227, 0.3);
+  /* color: white; */
+}
