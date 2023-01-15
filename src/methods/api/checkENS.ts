@@ -1,5 +1,6 @@
 import { useQuery } from "@apollo/client";
-import { Alchemy, Network } from "alchemy-sdk";
+import { darkTheme } from "@rainbow-me/rainbowkit";
+import { Alchemy, Network, SortingOrder } from "alchemy-sdk";
 import { ethers } from "ethers";
 import { useEffect } from "react";
 import { domainsQuery, registrationsQuery } from "./queries";
@@ -35,16 +36,50 @@ export const CheckENS = async (domainInput: string, setIsENSloading: any, setRes
       "0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85",
       tokenId.toString()
     );
+    console.log(metadata)
 
-    // available
-    if(metadata.metadataError != undefined){
+    // al nfts owned by an address
+    // const nfts = await alchemy_ethereum.nft.getNftsForOwner("mike.eth", {
+    //   contractAddresses: ["0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85",],
+    // });
+    // console.log(nfts)
 
-      setResults((prevData:any) => [{name: domainInput, extension:".eth", provider: "ENS", blockchain: "Ethereum", startDate: new Date(), endDate: new Date(), price: basePrice, renewalPrice: basePrice, available: false, image: `https://metadata.ens.domains/preview/${domainInput}.eth`, metadata: tokenId}, ...prevData])
+    // get owner of nft 
+    // const owner = await alchemy_ethereum.nft.getOwnersForNft("0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85", tokenId);
+    // console.log(owner)
+
+    // .eth -> address
+    // const _owner = await alchemy_ethereum.core.resolveName("mike.eth");
+    // console.log(_owner)
+    // get last sale price
+    // alchemy_ethereum.nft
+    // .getNftSales({
+    //   fromBlock: 0,
+    //   toBlock: "latest",
+    //   order: SortingOrder.ASCENDING,
+    //   contractAddress: "0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85",
+    //   tokenId: tokenId,
+    // })
+    // .then((data) =>
+    //   console.log(data)
+    // );
+
+    // taken
+    if(metadata.metadataError == undefined){
+
+      let registrationDate= new Date(); 
+      let expirationDate = new Date();
+      if(metadata!.rawMetadata!.attributes != undefined){
+        registrationDate = new Date(parseInt(metadata.rawMetadata!.attributes[4].value));
+        expirationDate = new Date(parseInt(metadata.rawMetadata!.attributes[5].value));
+      }
+
+      setResults((prevData:any) => [{name: domainInput, extension:".eth", provider: "ENS", blockchain: "Ethereum", startDate: registrationDate, endDate: expirationDate, price: basePrice, renewalPrice: basePrice, available: false, image: `https://metadata.ens.domains/preview/${domainInput}.eth`, metadata: metadata}, ...prevData])
     }
-    // taken -> get metadata
+    // available
     else{
 
-      setResults((prevData:any) => [{name: domainInput, extension:".eth", provider: "ENS", blockchain: "Ethereum", startDate: new Date(), endDate: new Date(), price: basePrice, renewalPrice: basePrice, available: true, image: `https://metadata.ens.domains/preview/${domainInput}.eth`, metadata: metadata}, ...prevData])
+      setResults((prevData:any) => [{name: domainInput, extension:".eth", provider: "ENS", blockchain: "Ethereum", startDate: new Date(), endDate: new Date(), price: basePrice, renewalPrice: basePrice, available: true, image: `https://metadata.ens.domains/preview/${domainInput}.eth`, metadata: tokenId}, ...prevData])
     }
 
     setIsENSloading(false);

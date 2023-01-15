@@ -39,21 +39,33 @@ const checkAllUD = (domainName: string, setResults: any, searchMetadata: boolean
 
           const _price = data.exact[i].price != -1 ? data.exact[i].price / 100 : -1
           const _available = data.exact[i].availability
+          const _status = data.exact[i].status
+      
           const image = `https://metadata.unstoppabledomains.com/image-src/${name+extension}.svg`
+          const tokenId = getUDtokenId(name+extension).toString();
 
-          const metadata = await alchemy_polygon.nft.getNftMetadata(
-            "0xa9a6A3626993D487d2Dbda3173cf58cA1a9D9e9f", //ud eth 0xd1e5b0ff1287aa9f9a268759062e4ab08b9dacbe //ens 0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85
-            getUDtokenId(name+extension).toString(),
-          )
+          let blockchain = "Polygon";
+          let metadata = await alchemy_polygon.nft.getNftMetadata(
+            "0xa9a6A3626993D487d2Dbda3173cf58cA1a9D9e9f",
+            tokenId,
+          );
+          if(metadata.metadataError != undefined){
+            
+              blockchain = "Ethereum";
+              metadata = await alchemy_ethereum.nft.getNftMetadata(
+                "0xd1e5b0ff1287aa9f9a268759062e4ab08b9dacbe",
+                tokenId,
+              );
+          }
 
           // available
           if(metadata.metadataError != undefined){
 
-            _results.push({name: name, extension: extension, provider: "UD", blockchain: extension == ".crypto" ? "Ethereum" : "Polygon", available: _available, price: _price, renewalPrice: 0, startDate: new Date(), endDate: new Date(), image: image,  metadata: ""})
+            _results.push({name: name, extension: extension, provider: "UD", blockchain: blockchain, available: _available, price: _price, renewalPrice: 0, startDate: new Date(), endDate: new Date(), image: image,  metadata: _status})
 
           }
           else{
-            _results.push({name: name, extension: extension, provider: "UD", blockchain: extension == ".crypto" ? "Ethereum" : "Polygon", available: _available, price: _price, renewalPrice: 0, startDate: new Date(), endDate: new Date(), image: image, metadata: metadata})
+            _results.push({name: name, extension: extension, provider: "UD", blockchain: blockchain, available: _available, price: _price, renewalPrice: 0, startDate: new Date(), endDate: new Date(), image: image, metadata: metadata})
           }
         }
 

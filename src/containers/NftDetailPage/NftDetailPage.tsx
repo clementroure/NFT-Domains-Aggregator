@@ -36,7 +36,7 @@ const NftDetailPage: FC<NftDetailPageProps> = ({
         {/* ---------- 1 ----------  */}
         <div className="pb-9 space-y-5">
           <div className="flex justify-between items-center">
-            <Badge name="ENS" color="green" />
+            <Badge name={domain.metadata.contract.openSea.collectionName} color="green" />
             {/* <LikeSaveBtns /> */}
           </div>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold">
@@ -209,7 +209,7 @@ const NftDetailPage: FC<NftDetailPageProps> = ({
               {/* <LikeButton className="absolute right-3 top-3 " /> */}
             </div>
 
-            <AccordionInfo />
+            <AccordionInfo domain={domain}/>
           </div>
 
           {/* SIDEBAR */}

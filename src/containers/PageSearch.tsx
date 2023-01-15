@@ -43,6 +43,11 @@ const PageSearch: FC<PageSearchProps> = ({ className = "" }) => {
 
   const searchDomain = async (e:any = null) => {
 
+    // wait loading end before new prompt
+    if(isLoading){
+      e.preventDefault();
+      return;
+    }
     // format input
     const formattedDomainInput = (inputDomain.replace(/,(\s+)?$/, '')).replace(/\s+/g, "");
     setInputDomain(formattedDomainInput)

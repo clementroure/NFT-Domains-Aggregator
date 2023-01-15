@@ -12,6 +12,16 @@ const CardNFT: FC<CardNFTProps> = ({ className = "", domain }) => {
 
   const navigate = useNavigate();
 
+  const buyDomain = () => {
+
+    alert("This domain is free !");
+  }
+
+  const protectedDomain = () => {
+
+    alert("This domain is protected.");
+  }
+
   return (
     <div
       className={`nc-CardNFT relative flex flex-col group !border-0 [ nc-box-has-hover nc-dark-box-bg-has-hover ] ${className}`}
@@ -46,7 +56,11 @@ const CardNFT: FC<CardNFTProps> = ({ className = "", domain }) => {
         </div>
       </div>
 
-      <button onClick={() => navigate("/nft-detailt", { state: { domain } })} className="absolute inset-0"></button>
+      {domain.provider == "UD" ?
+      <button onClick={() => !domain.available ? (domain.metadata == "protected" ? protectedDomain() : navigate("/nft-detailt", { state: { domain } }) ): buyDomain() } className="absolute inset-0"></button>
+      :
+      <button onClick={() => !domain.available ? navigate("/nft-detailt", { state: { domain } }) : buyDomain() } className="absolute inset-0"></button>
+      }
     </div>
   );
 };
