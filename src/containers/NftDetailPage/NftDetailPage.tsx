@@ -105,13 +105,14 @@ const NftDetailPage: FC<NftDetailPageProps> = ({
           <div className="mt-8 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
             <ButtonPrimary 
             onClick={() => {
-              if (isMobile) {
-                const win: Window = window;
-                win.location = 'https://metamask.app.link/dapp/e2vh6kl.web.app/page-search';
-              }
+              // if (isMobile) {
+              //   const win: Window = window;
+              //   win.location = 'https://metamask.app.link/dapp/e2vh6kl.web.app/page-search';
+              // }
+              window.open(`https://chat.blockscan.com/index?a=${domain.owner}`, '_blank');
             }}
             className="flex-1">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              {/* <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M18.04 13.55C17.62 13.96 17.38 14.55 17.44 15.18C17.53 16.26 18.52 17.05 19.6 17.05H21.5V18.24C21.5 20.31 19.81 22 17.74 22H6.26C4.19 22 2.5 20.31 2.5 18.24V11.51C2.5 9.44001 4.19 7.75 6.26 7.75H17.74C19.81 7.75 21.5 9.44001 21.5 11.51V12.95H19.48C18.92 12.95 18.41 13.17 18.04 13.55Z"
                   stroke="currentColor"
@@ -140,12 +141,19 @@ const NftDetailPage: FC<NftDetailPageProps> = ({
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
+              </svg> */}
+              <span className="mr-2.5">Chat</span>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6 mb-0.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
               </svg>
-
-              <span className="ml-2.5">Place a bid</span>
             </ButtonPrimary>
-            <ButtonSecondary href={"/contact"} className="flex-1">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <ButtonSecondary className="flex-1"  onClick={() => {
+              if(domain.blockchain=="Ethereum") 
+              window.open(`https://etherscan.io/nft/0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85/${domain.metadata.tokenId}`, '_blank');
+              else
+              window.open(`https://polygonscan.com/token/0xa9a6a3626993d487d2dbda3173cf58ca1a9d9e9f?a=${domain.metadata.tokenId}`, '_blank');
+            }}>
+              {/* <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M8.57007 15.27L15.11 8.72998"
                   stroke="currentColor"
@@ -174,9 +182,12 @@ const NftDetailPage: FC<NftDetailPageProps> = ({
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
-              </svg>
+              </svg> */}
 
-              <span className="ml-2.5">Monitoring</span>
+              <span className="mr-2.5">More details</span>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-5 h-5 mb-0.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                </svg>
             </ButtonSecondary>
           </div>
         </div>

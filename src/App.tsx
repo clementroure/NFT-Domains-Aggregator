@@ -82,7 +82,7 @@ function App() {
     provider,
   })
 
-  const [rainbowTheme, setRainbowTheme] = useState(localStorage.getItem("theme") == "dark" ? myDarkTheme : myLightTheme)
+  const [rainbowTheme, setRainbowTheme] = useState(localStorage.getItem("theme") == "light" ? myLightTheme : myDarkTheme)
   window.addEventListener('theme_change', () => {
     if(localStorage.getItem("theme") == "dark" )
     setRainbowTheme(myDarkTheme)

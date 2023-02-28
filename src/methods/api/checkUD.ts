@@ -1,4 +1,5 @@
-import { Network, Alchemy } from "alchemy-sdk";
+import { Network, Alchemy, AssetTransfersCategory, fromHex } from "alchemy-sdk";
+import axios from "axios";
 
 const getUDtokenId = (domainName: string) => {
 
@@ -43,12 +44,9 @@ const checkAllUD = (domainName: string, setResults: any, searchMetadata: boolean
       
           const image = `https://metadata.unstoppabledomains.com/image-src/${name+extension}.svg`
           const tokenId = getUDtokenId(name+extension).toString();
+          console.log(name + " " + tokenId);
 
           let owner = "";
-          // try{
-          //   owner = (await alchemy_ethereum.nft.getOwnersForNft("0xa9a6A3626993D487d2Dbda3173cf58cA1a9D9e9f", tokenId)).owners[0];
-          // }catch(e){}
-
           let blockchain = "Polygon";
           let metadata;
 
@@ -66,7 +64,14 @@ const checkAllUD = (domainName: string, setResults: any, searchMetadata: boolean
               metadata = await alchemy_polygon.nft.getNftMetadata(
                 "0xa9a6A3626993D487d2Dbda3173cf58cA1a9D9e9f",
                 tokenId,
-              );
+              );  
+
+              try{  
+              owner = (await alchemy_polygon.nft.getOwnersForNft("0xa9a6A3626993D487d2Dbda3173cf58cA1a9D9e9f", tokenId)).owners[0];
+
+              }catch(e){}
+              console.log("owner: " + owner)
+              
               if(metadata.metadataError != undefined){
                 
                   blockchain = "Ethereum";
@@ -74,9 +79,11 @@ const checkAllUD = (domainName: string, setResults: any, searchMetadata: boolean
                     "0xd1e5b0ff1287aa9f9a268759062e4ab08b9dacbe",
                     tokenId,
                   );
-                  // try{
-                  //   owner = (await alchemy_ethereum.nft.getOwnersForNft("0xd1e5b0ff1287aa9f9a268759062e4ab08b9dacbe", tokenId)).owners[0];
-                  // }catch(e){}
+                  try{
+                    owner = (await alchemy_ethereum.nft.getOwnersForNft("0xd1e5b0ff1287aa9f9a268759062e4ab08b9dacbe", tokenId)).owners[0];
+                    // Get all NFTs
+                    // const nfts = await alchemy_ethereum.nft.getNftsForOwner(owner);
+                  }catch(e){}
               }
   
                 _results.push({name: name, extension: extension, provider: "UD", blockchain: blockchain, available: _available, price: _price, renewalPrice: 0, startDate: new Date(), endDate: new Date(), image: image, owner: owner, transfers: "", nfts: "",  metadata: metadata})

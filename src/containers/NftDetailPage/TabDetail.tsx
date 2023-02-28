@@ -78,26 +78,48 @@ const TabDetail = (props: any) => {
 
   const renderTabOwner = () => {
     return (
-      <div onClick={() => window.open(props.domain.blockchain == "Ethereum" ? `https://etherscan.io/address/${props.domain.owner}` : `https://polygonscan.com/address/${props.domain.owner}`, '_blank')!.focus()} className="flex items-center py-4 cursor-pointer">
-        <div className="rounded-lg relative overflow-hidden">
-          <Blockies
-            seed={props.domain.owner}
-            size={8} 
-            scale={4} 
-          />
-        </div>
-        <span className="ml-2.5 text-neutral-500 dark:text-neutral-400 flex flex-col">
-          <div className="flex flex-row">
-            <span className="text-sm">Owner</span>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-3.5 h-3.5  ml-1">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-            </svg>
+      <div>
+        <div onClick={() => window.open(props.domain.blockchain == "Ethereum" ? `https://etherscan.io/address/${props.domain.owner}` : `https://polygonscan.com/address/${props.domain.owner}`, '_blank')!.focus()} className="flex items-center py-4 cursor-pointer">
+          <div className="rounded-lg relative overflow-hidden">
+            <Blockies
+              seed={props.domain.owner}
+              size={8} 
+              scale={4} 
+            />
           </div>
-          <span className="text-neutral-900 dark:text-neutral-200 font-medium flex items-center overflow-hidden break-all">
-            <span>{props.domain.owner}</span>
-            {/* <VerifyIcon iconClass="w-4 h-4" /> */}
+          <span className="ml-2.5 text-neutral-500 dark:text-neutral-400 flex flex-col">
+            <div className="flex flex-row">
+              <span className="text-sm">Owner</span>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-3.5 h-3.5  ml-1">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+              </svg>
+            </div>
+            <span className="text-neutral-900 dark:text-neutral-200 font-medium flex items-center overflow-hidden break-all">
+              <span>{props.domain.owner}</span>
+              {/* <VerifyIcon iconClass="w-4 h-4" /> */}
+            </span>
           </span>
-        </span>
+        </div>
+        
+        <div onClick={() => window.open(props.domain.blockchain == "Ethereum" ? `https://etherscan.io/tokenholdings?a=${props.domain.owner}` : `https://polygonscan.com/tokenholdings?a=${props.domain.owner}`, '_blank')!.focus()} className="flex items-center py-4 cursor-pointer">
+          <div className="rounded-lg relative overflow-hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-8 h-8">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3" />
+          </svg>
+          </div>
+          <span className="ml-2.5 text-neutral-500 dark:text-neutral-400 flex flex-col">
+            <div className="flex flex-row">
+              <span className="text-sm">Token holdings</span>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-3.5 h-3.5  ml-1">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+              </svg>
+            </div>
+            <span className="text-neutral-900 dark:text-neutral-200 font-medium flex items-center overflow-hidden break-all">
+              <span>{props.domain.owner}</span>
+              {/* <VerifyIcon iconClass="w-4 h-4" /> */}
+            </span>
+          </span>
+        </div>
       </div>
     );
   };
@@ -126,7 +148,7 @@ const TabDetail = (props: any) => {
             <Tab
               key={tab}
               className={({ selected }) =>
-                `px-3.5 sm:px-8 py-1.5 sm:py-2 text-xs sm:text-sm leading-5 font-medium rounded-full focus:outline-none focus:ring-2 ring-primary-300 ${
+                `px-3.5 sm:px-8 py-1.5 sm:py-2 text-xs sm:text-sm leading-5 font-medium rounded-full focus:outline-none focus:ring-0 ring-primary-300 ${
                   selected
                     ? "bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900"
                     : "text-neutral-700 dark:text-neutral-300 bg-neutral-100/70 dark:bg-neutral-800 hover:text-neutral-900 dark:hover:text-neutral-100"
@@ -142,7 +164,7 @@ const TabDetail = (props: any) => {
             <Tab.Panel
               key={idx}
               className={
-                "rounded-xl focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60 "
+                "rounded-xl focus:outline-none focus:ring-0 ring-offset-0 ring-offset-blue-400 ring-white ring-opacity-60 "
               }
             >
               {renderTabItem(tab)}
