@@ -30,9 +30,9 @@ const LocationInput: FC<LocationInputProps> = ({
   const [value, setValue] = useState(defaultValue);
   const [showPopover, setShowPopover] = useState(autoFocus);
 
-  useEffect(() => {
-    setValue(defaultValue);
-  }, [defaultValue]);
+  // useEffect(() => {
+  //   setValue(defaultValue);
+  // }, [defaultValue]);
 
   useEffect(() => {
     setShowPopover(autoFocus);
