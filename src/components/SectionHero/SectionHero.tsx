@@ -29,7 +29,7 @@ const SectionHero: FC<SectionHeroProps> = ({
             {subHeading}
           </span>
           <div className="pt-7 flex  space-x-4">
-            <ButtonPrimary href="/page-search">
+            <ButtonPrimary href="/search">
               <span className="">Explore</span>
               <SearchIcon className="w-5 h-5 ml-2.5" />
             </ButtonPrimary>

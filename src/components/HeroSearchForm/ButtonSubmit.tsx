@@ -8,7 +8,7 @@ const ButtonSubmit = (props: any) => {
 
   return (
     <button
-      onClick={() => (inputDomain.length > 0 && inputDomain.length < 1000) && navigate("/page-search", { state: { inputDomain } }) }
+      onClick={() => (inputDomain.length > 0 && inputDomain.length < 1000) && navigate("/search", { state: { inputDomain } }) }
       type="button"
       className="h-14 px-4 md:h-16 w-full md:w-16 rounded-full bg-primary-6000 hover:bg-primary-700 flex items-center justify-center text-neutral-50 focus:outline-none"
     >

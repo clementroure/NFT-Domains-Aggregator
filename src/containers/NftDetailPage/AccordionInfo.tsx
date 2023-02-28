@@ -31,7 +31,7 @@ export default function AccordionInfo(props:any) {
           </>
         )}
       </Disclosure>
-        <Disclosure defaultOpen as="div" className="mt-4 md:mt-6">
+        <Disclosure as="div" className="mt-4 md:mt-6">
         {({ open }) => (
           <>
             <Disclosure.Button className="flex justify-between w-full px-4 py-2 font-medium text-left bg-neutral-100 dark:bg-neutral-700 dark:hover:bg-neutral-500 rounded-lg hover:bg-neutral-200 focus:outline-none focus-visible:ring focus-visible:ring-neutral-500 focus-visible:ring-opacity-75">
@@ -123,7 +123,7 @@ export default function AccordionInfo(props:any) {
           </>
         )}
       </Disclosure>
-      <Disclosure defaultOpen as="div" className="mt-4 md:mt-6">
+      <Disclosure as="div" className="mt-4 md:mt-6">
         {({ open }) => (
           <>
             <Disclosure.Button className="flex justify-between w-full px-4 py-2 font-medium text-left bg-neutral-100 dark:bg-neutral-700 dark:hover:bg-neutral-500 rounded-lg hover:bg-neutral-200 focus:outline-none focus-visible:ring focus-visible:ring-neutral-500 focus-visible:ring-opacity-75">

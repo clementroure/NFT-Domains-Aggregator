@@ -24,7 +24,7 @@ const otherPageChildMenus: NavItemType[] = [
   },
   {
     id: ncNanoId(),
-    href: "/page-search",
+    href: "/search",
     name: "Search page",
   },
   {

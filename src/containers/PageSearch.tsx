@@ -1,21 +1,26 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, Fragment, useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
-import BackgroundSection from "components/BackgroundSection/BackgroundSection";
+import { getFingerprint } from "react-fingerprint";
 import Pagination from "shared/Pagination/Pagination";
 import ButtonPrimary from "shared/Button/ButtonPrimary";
-import SectionSliderCollections from "components/SectionSliderCollections";
-import SectionBecomeAnAuthor from "components/SectionBecomeAnAuthor/SectionBecomeAnAuthor";
 import HeaderFilterSearchPage from "components/HeaderFilterSearchPage";
 import Input from "shared/Input/Input";
 import ButtonCircle from "shared/Button/ButtonCircle";
 import CardNFT from "components/CardNFT";
-import { useLocation } from "react-router-dom";
-import { checkAllUD } from "methods/api/checkUD";
+import { useLocation, useSearchParams } from "react-router-dom";
+import { checkAllUD, registrarUD } from "methods/api/checkUD";
 import { ethers } from "ethers";
 import {contractAddress,contractABI} from "../contracts/ens/ens_contract"
 import { CheckENS } from "methods/api/checkENS";
 import Lottie from "lottie-react";
 import loadingLottie from "../images/loading.json";
+import { CSVLink } from "react-csv";
+import { Popup } from "widgets/Popup";
+import NftDetailPage from "./NftDetailPage/NftDetailPage";
+import { addPolygonNetwork, switchToEthereum, switchToPolygon } from "methods/switchBlockchain";
+import {contractAddress as contractAddressENS} from "../contracts/ens/ens_registrar_controller"
+import {contractABI as contractABIens} from "../contracts/ens/ens_registrar_controller"
+import { connectStorageEmulator } from "firebase/storage";
 const ethereum = window.ethereum;
 
 export interface PageSearchProps {
@@ -25,12 +30,14 @@ export interface PageSearchProps {
 const PageSearch: FC<PageSearchProps> = ({ className = "" }) => {
 
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   // check if new search input is different than last one
   const [oldDomainInput, setOldDomainInput] = useState("")
   // search input
   const [inputDomain, setInputDomain] = useState((location.state != null && location.state.inputDomain != undefined) ? location.state.inputDomain : "")
   // 1 result obj = 1 line
-  const [results, setResults] = useState<{name: string, extension: string, available: boolean, provider: string, blockchain: string, price: number, renewalPrice: number, startDate: Date, endDate: Date, image:string, metadata: any}[]>([])
+  const [results, setResults] = useState<{name: string, extension: string, available: boolean, provider: string, blockchain: string, price: number, renewalPrice: number, startDate: Date, endDate: Date, image:string, owner: string, transfers:any, nfts:any, metadata: any}[]>([])
+  const [sortedResults, setSortedResults] = useState<{name: string, extension: string, available: boolean, provider: string, blockchain: string, price: number, renewalPrice: number, startDate: Date, endDate: Date, image:string, owner: string, transfers:any, nfts:any, metadata: any}[]>([])
   // just to update the UI
   const [resultsUI, setResultsUI] = useState<{isLoading: boolean}[]>([])
   // check if display table
@@ -39,7 +46,16 @@ const PageSearch: FC<PageSearchProps> = ({ className = "" }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isUDloading, setIsUDloading] = useState(false)
   const [isENSloading, setIsENSloading] = useState(false)
-
+  // dialog popup
+  const [isPopupOpen, setIsPopupOpen] = useState(false)
+  const [popup, setPopup] = useState<{title: string, subtitle: string, body: string, btn1: string, btn2: string, id: string}[]>([])
+  // NFT detail page Visible
+  const [isNftPageVisible, setIsNftPageVisible] = useState(false);
+  const [selectedDomain, setSelectedDomain] = useState<{name: string, extension: string, available: boolean, provider: string, blockchain: string, price: number, renewalPrice: number, startDate: Date, endDate: Date, image:string, owner: string, transfers:any, nfts:any, metadata: any}>();
+  // if user load page with a parameter in the url
+  const [selectedDomainName, setSelectedDomainName] = useState("")
+  // multiple query
+  const [queryLengh, setQueryLength] = useState(0)
 
   const searchDomain = async (e:any = null) => {
 
@@ -55,6 +71,7 @@ const PageSearch: FC<PageSearchProps> = ({ className = "" }) => {
     var domainList = (formattedDomainInput).split(",").map(function(item:any) {
       return item.trim();
     });
+    setQueryLength(domainList.length);
     // test if each domain doesnt contain special chars
     if(domainList[0].match(/^ *$/) !== null) { return; } else{ if(e!=null){e.preventDefault();} }
     const regex = new RegExp("^[A-Za-z0-9]+[a-zA-Z0-9-]*$")
@@ -77,7 +94,7 @@ const PageSearch: FC<PageSearchProps> = ({ className = "" }) => {
 
         if(domainList[i].length >= 3){ // min 3 char for ENS domain
 
-            CheckENS(domainList[i], setIsENSloading, setResults);
+            CheckENS(domainList[i].toLowerCase(), setIsENSloading, setResults);
         }
         else{
           setIsENSloading(false);
@@ -85,17 +102,129 @@ const PageSearch: FC<PageSearchProps> = ({ className = "" }) => {
       }
   }
 
+  const buyCrypto = async () => {
+
+    await ethereum.request({ method: 'eth_requestAccounts' }).then(async() => {
+    // Get wallet
+    const provider = new ethers.providers.Web3Provider(ethereum,'any');
+    const signer = provider.getSigner();
+
+    const { chainId } = await provider.getNetwork();
+    const myAddress = await signer.getAddress();
+
+    // check if on polygon network. if not switch
+    if(selectedDomain?.blockchain! == "Polygon" && chainId != 137){
+      try{
+        switchToPolygon(ethereum);
+      }
+      catch(e){
+        // try by adding the network to wallet
+        addPolygonNetwork(ethereum);
+        switchToPolygon(ethereum);
+      }
+      return;
+    }
+    // check if on ethereum network
+    if(selectedDomain!.blockchain == "Ethereum" && chainId != 1){
+      switchToEthereum(ethereum);
+      return;
+    }
+    // get MATIC and ETH price
+    await fetch(selectedDomain?.blockchain == "Polygon" ? `https://min-api.cryptocompare.com/data/price?fsym=USD&tsyms=MATIC` : `https://min-api.cryptocompare.com/data/price?fsym=USD&tsyms=ETH`)
+    .then((res) => res.json())
+    .then((data) => {
+      const amount = selectedDomain?.blockchain == "Polygon" ? (data.MATIC * selectedDomain?.price) : (data.ETH * selectedDomain?.price!);
+      const unit = selectedDomain?.blockchain == "Polygon" ? "MATIC" : "ETH";
+      // cehck if balance > domain price
+      provider.getBalance(myAddress).then(async (balance:any) => {
+        // convert a currency unit from wei to ether
+        const balanceInEth = ethers.utils.formatEther(balance)
+        if(parseFloat(balanceInEth) <= amount){
+          alert("Insufficient Fund: Price is " + (selectedDomain?.blockchain == "Polygon" ? amount.toFixed(2).toString() : amount.toFixed(4).toString())  + " " + unit);
+          return;
+        }
+        //// REGISTRATION ////
+
+        // ENS: https://docs.ens.domains/dapp-developer-guide/registering-and-renewing-names (smart contract call) (testnet: Goerli, same address)
+        if(selectedDomain?.provider == "ENS"){
+
+          const controller = new ethers.Contract(contractAddressENS, contractABIens, signer); 
+          const register = async (name: string, owner:any, duration:any) => {
+            // Generate a random value to mask our commitment
+            const random = new Uint8Array(32);
+            crypto.getRandomValues(random);
+            const salt = "0x" + Array.from(random).map(b => b.toString(16).padStart(2, "0")).join("");
+            // Submit our commitment to the smart contract
+            const commitment = await controller.makeCommitment(name, owner, salt);
+            console.log(commitment)
+            const tx = await controller.commit(commitment);
+            console.log(tx)
+            // Add 10% to account for price fluctuation; the difference is refunded.
+            const price = Math.round((await controller.rentPrice(name, duration)) * 1.1);
+            console.log(price)
+            // Wait 60 seconds before registering
+            setTimeout(async () => {
+              // Submit our registration request
+              try{
+                await controller.register(name, owner, duration, salt, {value: price});
+              }
+              catch(e){console.log(e)}
+            }, 60000);
+          }
+
+          register(selectedDomain?.name, myAddress, 31536000); // 1 year
+        }
+        // UD: Partner API: https://docs.unstoppabledomains.com/openapi/reference/#operation/PostOrders (api call)
+        else{
+          // get entropy from browsers settings 
+          // verify its the same user
+          const fingerprint = await getFingerprint()
+          const email = ""
+
+          registrarUD(selectedDomain, myAddress, email, fingerprint)
+        }
+      });
+    });
+   })
+  }
+
+  // first search from home page
   useEffect(() => {
+    // clear paramters if page reload
+    if(searchParams.get("") == null){
+      if (window.performance) {
+        if (performance.navigation.type == 1) {
+          window.history.replaceState(null, "NFT Domains", window.location.href.split('?')[0]);
+        }
+      }
+    }
+    else{
+      if(searchParams.get("")!.includes('.')){
+        setSelectedDomainName(searchParams.get("")!);
+        setInputDomain(searchParams.get("")!.substring(0, searchParams.get("")!.indexOf(".")))
+      }
+      else
+      setInputDomain(searchParams.get(""))
+    }
     if(inputDomain != "")
     searchDomain()
   },[])
+
+  // if the url contains a domain
+  const [ignoreFirst4, setIgnoreFirst4] = useState(true)
+  useEffect(() => {
+    if(ignoreFirst4){setIgnoreFirst4(false); return;}
+
+    if(searchParams.get("") != null)
+    searchDomain()
+  },[inputDomain])
 
    // called when ud or ens data ahs been loaded
    const [ignoreFirst, setIgnoreFirst] = useState(true)
    useEffect(() => {
     if(ignoreFirst){setIgnoreFirst(false); return;}
 
-    if(results.length > 1){ // more than ENS result only
+    if(results.length >= queryLengh * 9){ // more than ENS result only
       if(!isENSloading && !isUDloading){
 
         let _resultsUI: {isLoading: boolean}[] = []
@@ -104,22 +233,54 @@ const PageSearch: FC<PageSearchProps> = ({ className = "" }) => {
         }
         setResultsUI(_resultsUI)
 
+        // Sort according to filters
+        setSortedResults(results.sort((a, b) => a.name.localeCompare(b.name)));
+
         setHasResults(true)
-        setIsLoading(false)
+
         console.log(results)
       }
     }
 
    },[results])
 
+   const [ignoreFirst2, setIgnoreFirst2] = useState(false)
+   useEffect(() => {
+    if(ignoreFirst2){setIgnoreFirst2(false); return;}
+    if(hasResults){
+
+      setIsLoading(false)
+      
+      if(searchParams.get("") != null){
+
+        if(selectedDomainName == "")
+        window.history.replaceState(null, "NFT Domains", window.location.href.split('?')[0])
+        else{
+          const _selectedDomain = results.find((_domain) => {
+            return _domain.name+_domain.extension == searchParams.get("");
+          })
+          setSelectedDomain(_selectedDomain)
+          setIsNftPageVisible(true)
+        }
+      }
+    }
+
+   },[sortedResults]);
+
+   useEffect(() => {
+    window.scrollTo(0, 0)
+   },[isNftPageVisible]);
+
   return (
-    <div className={`nc-PageSearch  ${className}`} data-nc-id="PageSearch">
+    <div className={`nc-PageSearch  ${className} overflow-x-hidden`} data-nc-id="PageSearch">
       <Helmet>
         <title>NFT Domains</title>
       </Helmet>
 
+      {!isNftPageVisible ?
+      <>
       <div
-        className={`nc-HeadBackgroundCommon h-24 2xl:h-28 top-0 left-0 right-0 w-full bg-primary-50 dark:bg-neutral-800/20 `}
+        className={`nc-HeadBackgroundCommon h-16 2xl:h-20 top-0 left-0 right-0 w-full bg-primary-50 dark:bg-neutral-800/20 overflow-x-hidden`}
         data-nc-id="HeadBackgroundCommon"
       />
       <div className="container">
@@ -179,18 +340,21 @@ const PageSearch: FC<PageSearchProps> = ({ className = "" }) => {
         </header>
       </div>
 
+      <Popup buy={buyCrypto} isPopupOpen={isPopupOpen} setIsPopupOpen={setIsPopupOpen} popup={popup}/>
+
       {!isLoading ?
       <>
-      {hasResults ?
-      <div className="container py-16 lg:pb-28 lg:pt-20 space-y-16 lg:space-y-28">
+      {sortedResults.length > 0 ?
+      <div className="container py-16 lg:pb-28 lg:pt-20 space-y-16 lg:space-y-28 overflow-x-hidden">
         <main>
+
           {/* FILTER */}
           <HeaderFilterSearchPage />
 
           {/* LOOP ITEMS */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-8 gap-y-10 mt-8 lg:mt-10">
-            {results.map((_domain, index) => (
-              <CardNFT domain={_domain} key={index} />
+            {sortedResults.map((_domain, index) => (
+              <CardNFT  setSelectedDomain={setSelectedDomain} setIsNftPageVisible={setIsNftPageVisible} setIsPopupOpen={setIsPopupOpen} setPopup={setPopup} domain={_domain} key={index} />
             ))}
           </div>
 
@@ -200,6 +364,10 @@ const PageSearch: FC<PageSearchProps> = ({ className = "" }) => {
             <ButtonPrimary loading>Show me more</ButtonPrimary>
           </div>
         </main>
+
+        {/* <CSVLink data={results} separator={";"} filename={`Domains_`+ new Date().toLocaleDateString("fr")}
+          className="fixed z-50 bottom-4 left-4 bg-gray-900 w-10 h-10 rounded-full drop-shadow-lg flex justify-center items-center text-white text-3xl hover:bg-gray-800 opacity-80 hover:drop-shadow-2xl animate-bounce">&#8659;
+        </CSVLink> */}
       </div>
       :
       <div className="h-56">
@@ -214,6 +382,10 @@ const PageSearch: FC<PageSearchProps> = ({ className = "" }) => {
          </div>
       </div>
       }
+    </>
+    :
+     <NftDetailPage setIsNftPageVisible={setIsNftPageVisible} domain={selectedDomain}/>
+    }
     </div>
   );
 };

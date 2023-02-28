@@ -30,7 +30,7 @@ const SectionBecomeAnAuthor: FC<SectionBecomeAnAuthorProps> = ({
           <ButtonPrimary href="/page-upload-item" className="">
             Create item
           </ButtonPrimary>
-          <ButtonSecondary href="/page-search" className="">
+          <ButtonSecondary href="/search" className="">
             Discover more
           </ButtonSecondary>
         </div>

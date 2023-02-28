@@ -2,10 +2,10 @@ import React from "react";
 import { Tab } from "@headlessui/react";
 import { personNames } from "contains/fakeData";
 import Avatar from "shared/Avatar/Avatar";
-import VerifyIcon from "components/VerifyIcon";
+import Blockies from 'react-blockies';
 
-const TabDetail = () => {
-  const TABS = ["Bid History", "Provenance", "Owner"];
+const TabDetail = (props: any) => {
+  const TABS = ["Transfers", "Owner"];
 
   const renderTabBidHistory = () => {
     return (
@@ -78,13 +78,24 @@ const TabDetail = () => {
 
   const renderTabOwner = () => {
     return (
-      <div className="flex items-center py-4">
-        <Avatar sizeClass="h-11 w-11" radius="rounded-full" />
+      <div onClick={() => window.open(props.domain.blockchain == "Ethereum" ? `https://etherscan.io/address/${props.domain.owner}` : `https://polygonscan.com/address/${props.domain.owner}`, '_blank')!.focus()} className="flex items-center py-4 cursor-pointer">
+        <div className="rounded-lg relative overflow-hidden">
+          <Blockies
+            seed={props.domain.owner}
+            size={8} 
+            scale={4} 
+          />
+        </div>
         <span className="ml-2.5 text-neutral-500 dark:text-neutral-400 flex flex-col">
-          <span className="text-sm">Owner</span>
-          <span className="text-neutral-900 dark:text-neutral-200 font-medium flex items-center">
-            <span>{personNames[1]}</span>
-            <VerifyIcon iconClass="w-4 h-4" />
+          <div className="flex flex-row">
+            <span className="text-sm">Owner</span>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-3.5 h-3.5  ml-1">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+            </svg>
+          </div>
+          <span className="text-neutral-900 dark:text-neutral-200 font-medium flex items-center overflow-hidden break-all">
+            <span>{props.domain.owner}</span>
+            {/* <VerifyIcon iconClass="w-4 h-4" /> */}
           </span>
         </span>
       </div>
@@ -93,10 +104,10 @@ const TabDetail = () => {
 
   const renderTabItem = (item: string) => {
     switch (item) {
-      case "Bid History":
+      case "Sales":
         return renderTabBidHistory();
 
-      case "Provenance":
+      case "Transfers":
         return renderTabProvenance();
 
       case "Owner":

@@ -120,7 +120,7 @@ const CardNFTMusic2: FC<CardNFTMusic2Props> = ({
           <div className=" flex items-center pt-3 mt-1.5">
             {renderAvatars()}
             <Prices
-              price="1.00 ETH"
+              // price="1.00 ETH"
               labelText="Price"
               className="sm:ml-3.5"
               contentClass="py-1.5 px-2 sm:px-3 text-xs sm:text-sm font-semibold"

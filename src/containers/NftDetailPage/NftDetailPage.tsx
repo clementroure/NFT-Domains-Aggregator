@@ -13,29 +13,36 @@ import AccordionInfo from "./AccordionInfo";
 import nftImage from "../../images/clement_eth.svg"
 import {isMobile} from 'react-device-detect';
 import { useLocation, useNavigate } from "react-router-dom";
+import PropertyTypeSelect from "components/HeroSearchForm/PropertyTypeSelect";
 export interface NftDetailPageProps {
   className?: string;
   isPreviewMode?: boolean;
+  domain?: any;
+  setIsNftPageVisible?: any;
 }
 
 const NftDetailPage: FC<NftDetailPageProps> = ({
   className = "",
   isPreviewMode,
+  domain,
+  setIsNftPageVisible,
 }) => {
 
-  const navigate = useNavigate();
-  const location = useLocation();
+  window.history.pushState(null, "", window.location.href);
+  window.onpopstate = function () {
+    window.history.pushState(null, "", window.location.href);
 
-  const domain = (location.state != null && location.state.domain != undefined) ? location.state.domain : undefined
-  if(domain == undefined)
-  navigate("/page-search");
+    window.history.replaceState(null, "NFT Domains", window.location.href.split('?')[0]);
+
+    setIsNftPageVisible(false)
+  };
 
   const renderSection1 = () => {
     return (
       <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
         {/* ---------- 1 ----------  */}
-        <div className="pb-9 space-y-5">
-          <div className="flex justify-between items-center">
+        <div className="pb-9 space-y-5 hidden lg:block">
+          <div className="justify-between items-center">
             <Badge name={domain.metadata.contract.openSea.collectionName} color="green" />
             {/* <LikeSaveBtns /> */}
           </div>
@@ -44,7 +51,7 @@ const NftDetailPage: FC<NftDetailPageProps> = ({
           </h2>
 
           {/* ---------- 4 ----------  */}
-          <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-8 text-sm">
+          {/* <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-8 text-sm">
             <div className="flex items-center ">
               <Avatar sizeClass="h-9 w-9" radius="rounded-full" />
               <span className="ml-2.5 text-neutral-500 dark:text-neutral-400 flex flex-col">
@@ -70,18 +77,18 @@ const NftDetailPage: FC<NftDetailPageProps> = ({
                 </span>
               </span>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* ---------- 6 ----------  */}
-        <div className="py-9">
+        {/* <div className="py-9">
           <TimeCountDown />
-        </div>
+        </div> */}
 
         {/* ---------- 7 ----------  */}
         {/* PRICE */}
-        <div className="pb-9 pt-14">
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between">
+        <div className="pb-9 pt-2">
+          {/* <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between">
             <div className="flex-1 flex flex-col sm:flex-row items-baseline p-6 border-2 border-green-500 rounded-xl relative">
               <span className="absolute bottom-full translate-y-1 py-1 px-1.5 bg-white dark:bg-neutral-900 text-sm text-neutral-500 dark:text-neutral-400">
                 Current Bid
@@ -93,18 +100,14 @@ const NftDetailPage: FC<NftDetailPageProps> = ({
                 ( ≈ $3,221.22)
               </span>
             </div>
-
-            {/* <span className="text-sm text-neutral-500 dark:text-neutral-400 ml-5 mt-2 sm:mt-0 sm:ml-10">
-              [96 in stock]
-            </span> */}
-          </div>
+          </div> */}
 
           <div className="mt-8 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
             <ButtonPrimary 
             onClick={() => {
               if (isMobile) {
                 const win: Window = window;
-                win.location = 'https://metamask.app.link/dapp/e2vh6kl.web.app';
+                win.location = 'https://metamask.app.link/dapp/e2vh6kl.web.app/page-search';
               }
             }}
             className="flex-1">
@@ -141,7 +144,7 @@ const NftDetailPage: FC<NftDetailPageProps> = ({
 
               <span className="ml-2.5">Place a bid</span>
             </ButtonPrimary>
-            <ButtonSecondary href={"/nft-detailt"} className="flex-1">
+            <ButtonSecondary href={"/contact"} className="flex-1">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M8.57007 15.27L15.11 8.72998"
@@ -173,14 +176,14 @@ const NftDetailPage: FC<NftDetailPageProps> = ({
                 />
               </svg>
 
-              <span className="ml-2.5"> Make offer</span>
+              <span className="ml-2.5">Monitoring</span>
             </ButtonSecondary>
           </div>
         </div>
 
         {/* ---------- 9 ----------  */}
         <div className="pt-9">
-          <TabDetail />
+          <TabDetail domain={domain}/>
         </div>
       </div>
     );

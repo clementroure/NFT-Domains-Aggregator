@@ -6,20 +6,41 @@ import Prices from "./Prices";
 export interface CardNFTProps {
   className?: string;
   domain?: any;
+  setIsPopupOpen?: any;
+  setPopup?: any;
+  setIsNftPageVisible?: any;
+  setSelectedDomain?: any;
 }
 
-const CardNFT: FC<CardNFTProps> = ({ className = "", domain }) => {
-
-  const navigate = useNavigate();
+const CardNFT: FC<CardNFTProps> = ({ className = "", domain, setIsPopupOpen, setPopup, setIsNftPageVisible, setSelectedDomain}) => {
 
   const buyDomain = () => {
 
-    alert("This domain is free !");
+    setSelectedDomain(domain)
+    setPopup({
+      title: "Domain Available", subtitle: "You can buy it", body:`Buy this domain name for: $${domain.price}`, 
+      btn1: "Buy now", btn2: "Cancel", id: "available"
+    })
+    setIsPopupOpen(true)
   }
 
   const protectedDomain = () => {
 
-    alert("This domain is protected.");
+    setSelectedDomain(domain)
+    setPopup({
+      
+      title: "Domain Protected", subtitle: "You can't buy it", body:`Search for another domain.`, 
+      btn1: "Learn more", btn2: "Cancel", id: "protected"
+    })
+    setIsPopupOpen(true)
+  }
+
+  const navigateToNftPage = () => {
+
+    let currentPage = new URL(window.location.href);
+    window.history.replaceState(null, "NFT Domains", currentPage+"?="+domain.name+domain.extension)
+    setSelectedDomain(domain)
+    setIsNftPageVisible(true)
   }
 
   return (
@@ -40,26 +61,26 @@ const CardNFT: FC<CardNFTProps> = ({ className = "", domain }) => {
       </div>
 
       <div className="p-4 py-5 space-y-3">
-        <h2 className={`text-lg font-medium`}>
+        <h2 className={`text-lg font-medium truncate`}>
           {domain.name + domain.extension}
         </h2>
 
         <div className="w-2d4 w-full border-b border-neutral-100 dark:border-neutral-700"></div>
 
         <div className="flex justify-between items-end ">
-          <Prices labelText="Price" price="0.5 ETH" labelTextClassName="bg-white dark:bg-neutral-900 dark:group-hover:bg-neutral-800 group-hover:bg-neutral-50" />
+          <Prices labelText="Price" domain={domain} labelTextClassName="bg-white dark:bg-neutral-900 dark:group-hover:bg-neutral-800 group-hover:bg-neutral-50" />
           <div className="flex items-center text-sm text-neutral-500 dark:text-neutral-400">
              <span className="ml-1 mt-0.5">
-              {domain.available ? "Available" : "Buy"}
+              {domain.available ? "Buy now" : "More details"}
             </span> 
           </div>
         </div>
       </div>
 
       {domain.provider == "UD" ?
-      <button onClick={() => !domain.available ? (domain.metadata == "protected" ? protectedDomain() : navigate("/nft-detailt", { state: { domain } }) ): buyDomain() } className="absolute inset-0"></button>
+      <button onClick={() => !domain.available ? (domain.metadata == "protected" ? protectedDomain() : navigateToNftPage() ): buyDomain() } className="absolute inset-0"></button>
       :
-      <button onClick={() => !domain.available ? navigate("/nft-detailt", { state: { domain } }) : buyDomain() } className="absolute inset-0"></button>
+      <button onClick={() => !domain.available ? navigateToNftPage() : buyDomain() } className="absolute inset-0"></button>
       }
     </div>
   );

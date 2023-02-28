@@ -26,7 +26,7 @@ const checkAllUD = (domainName: string, setResults: any, searchMetadata: boolean
 
     const UDVerifyDisponibility = () => {
 
-      let _results: {name: string, extension: string, available: boolean, provider: string, blockchain: string, price: number, renewalPrice: number, startDate: Date, endDate: Date, image:string, metadata: any}[] = []
+      let _results: {name: string, extension: string, available: boolean, provider: string, blockchain: string, price: number, renewalPrice: number, startDate: Date, endDate: Date, image:string, owner: string, transfers:any, nfts: any, metadata: any}[] = []
 
       fetch(`https://unstoppabledomains.com/api/domain/search?q=${domainName}`)
       .then((res) => res.json())
@@ -44,28 +44,48 @@ const checkAllUD = (domainName: string, setResults: any, searchMetadata: boolean
           const image = `https://metadata.unstoppabledomains.com/image-src/${name+extension}.svg`
           const tokenId = getUDtokenId(name+extension).toString();
 
+          let owner = "";
+          // try{
+          //   owner = (await alchemy_ethereum.nft.getOwnersForNft("0xa9a6A3626993D487d2Dbda3173cf58cA1a9D9e9f", tokenId)).owners[0];
+          // }catch(e){}
+
           let blockchain = "Polygon";
-          let metadata = await alchemy_polygon.nft.getNftMetadata(
-            "0xa9a6A3626993D487d2Dbda3173cf58cA1a9D9e9f",
-            tokenId,
-          );
-          if(metadata.metadataError != undefined){
-            
-              blockchain = "Ethereum";
-              metadata = await alchemy_ethereum.nft.getNftMetadata(
-                "0xd1e5b0ff1287aa9f9a268759062e4ab08b9dacbe",
+          let metadata;
+
+          if(!_available){
+
+            if(_status == "protected"){
+              
+              console.log(_status)
+              _results.push({name: name, extension: extension, provider: "UD", blockchain: blockchain, available: _available, price: _price, renewalPrice: 0, startDate: new Date(), endDate: new Date(), image: image, owner: owner, transfers: "", nfts: "", metadata: _status})
+              
+            }
+            else{
+
+              blockchain = "Polygon";
+              metadata = await alchemy_polygon.nft.getNftMetadata(
+                "0xa9a6A3626993D487d2Dbda3173cf58cA1a9D9e9f",
                 tokenId,
               );
-          }
-
-          // available
-          if(metadata.metadataError != undefined){
-
-            _results.push({name: name, extension: extension, provider: "UD", blockchain: blockchain, available: _available, price: _price, renewalPrice: 0, startDate: new Date(), endDate: new Date(), image: image,  metadata: _status})
+              if(metadata.metadataError != undefined){
+                
+                  blockchain = "Ethereum";
+                  metadata = await alchemy_ethereum.nft.getNftMetadata(
+                    "0xd1e5b0ff1287aa9f9a268759062e4ab08b9dacbe",
+                    tokenId,
+                  );
+                  // try{
+                  //   owner = (await alchemy_ethereum.nft.getOwnersForNft("0xd1e5b0ff1287aa9f9a268759062e4ab08b9dacbe", tokenId)).owners[0];
+                  // }catch(e){}
+              }
+  
+                _results.push({name: name, extension: extension, provider: "UD", blockchain: blockchain, available: _available, price: _price, renewalPrice: 0, startDate: new Date(), endDate: new Date(), image: image, owner: owner, transfers: "", nfts: "",  metadata: metadata})
+            }
 
           }
           else{
-            _results.push({name: name, extension: extension, provider: "UD", blockchain: blockchain, available: _available, price: _price, renewalPrice: 0, startDate: new Date(), endDate: new Date(), image: image, metadata: metadata})
+            console.log(_status)
+            _results.push({name: name, extension: extension, provider: "UD", blockchain: blockchain, available: _available, price: _price, renewalPrice: 0, startDate: new Date(), endDate: new Date(), image: image, owner: owner, transfers: "", nfts: "", metadata: _status})
           }
         }
 
