@@ -9,7 +9,7 @@ export const StripePopup = (props: any) => {
 
    return(
         <Transition
-        show={props.isPopupOpen}
+        show={props.isStripePopupOpen}
         enter="transition duration-100 ease-out"
         enterFrom="transform scale-95 opacity-0"
         enterTo="transform scale-100 opacity-100"
@@ -19,8 +19,8 @@ export const StripePopup = (props: any) => {
         as={Fragment}
     >
         <Dialog
-            open={props.isPopupOpen}
-            onClose={props.setIsPopupOpen}
+            open={props.isStripePopupOpen}
+            onClose={props.setIsStripePopupOpen}
             as="div"
             className={
                 "fixed inset-0 z-10 overflow-y-auto flex justify-center items-center"
@@ -30,7 +30,7 @@ export const StripePopup = (props: any) => {
             <div className="fixed flex flex-col bg-gray-800 text-white w-10/12 sm:w-96 py-8 px-4 text-center rounded-xl">
              
             <Elements stripe={props.stripePromise} options={{clientSecret, appearance: {theme: "night", labels: 'floating', variables: {colorPrimary: "#141414"}}}}>
-                <CheckoutForm />
+                <CheckoutForm setIsStripePopupOpen={props.setIsStripePopupOpen}/>
             </Elements>
 
             </div>

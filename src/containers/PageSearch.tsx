@@ -20,8 +20,12 @@ import NftDetailPage from "./NftDetailPage/NftDetailPage";
 import { addPolygonNetwork, switchToEthereum, switchToPolygon } from "methods/switchBlockchain";
 import {contractAddress as contractAddressENS} from "../contracts/ens/ens_registrar_controller"
 import {contractABI as contractABIens} from "../contracts/ens/ens_registrar_controller"
-import { connectStorageEmulator } from "firebase/storage";
+import {loadStripe, Stripe} from '@stripe/stripe-js';
+import { StripePopup } from "widgets/StripePopup";
 const ethereum = window.ethereum;
+// stripe (test values)
+const clientSecret = "pi_3LXLRHFuKXi25RGc1OPGpaWZ_secret_3xOxozTIOqr60uECWEkp5w7BF"
+const stripePromise = loadStripe(`${process.env.REACT_APP_STRIPE_KEY}`);
 
 export interface PageSearchProps {
   className?: string;
@@ -48,6 +52,7 @@ const PageSearch: FC<PageSearchProps> = ({ className = "" }) => {
   const [isENSloading, setIsENSloading] = useState(false)
   // dialog popup
   const [isPopupOpen, setIsPopupOpen] = useState(false)
+  const [isStripePopupOpen, setIsStripePopupOpen] = useState(false)
   const [popup, setPopup] = useState<{title: string, subtitle: string, body: string, btn1: string, btn2: string, id: string}[]>([])
   // NFT detail page Visible
   const [isNftPageVisible, setIsNftPageVisible] = useState(false);
@@ -115,19 +120,19 @@ const PageSearch: FC<PageSearchProps> = ({ className = "" }) => {
     // check if on polygon network. if not switch
     if(selectedDomain?.blockchain! == "Polygon" && chainId != 137){
       try{
-        switchToPolygon(ethereum);
+        await switchToPolygon(ethereum);
       }
       catch(e){
         // try by adding the network to wallet
-        addPolygonNetwork(ethereum);
-        switchToPolygon(ethereum);
+        await addPolygonNetwork(ethereum);
+        await switchToPolygon(ethereum);
       }
-      return;
+      // return;
     }
     // check if on ethereum network
     if(selectedDomain!.blockchain == "Ethereum" && chainId != 1){
-      switchToEthereum(ethereum);
-      return;
+      await switchToEthereum(ethereum);
+      // return;
     }
     // get MATIC and ETH price
     await fetch(selectedDomain?.blockchain == "Polygon" ? `https://min-api.cryptocompare.com/data/price?fsym=USD&tsyms=MATIC` : `https://min-api.cryptocompare.com/data/price?fsym=USD&tsyms=ETH`)
@@ -340,7 +345,8 @@ const PageSearch: FC<PageSearchProps> = ({ className = "" }) => {
         </header>
       </div>
 
-      <Popup buy={buyCrypto} isPopupOpen={isPopupOpen} setIsPopupOpen={setIsPopupOpen} popup={popup}/>
+      <Popup selectedDomain={selectedDomain} isStripePopupOpen={isStripePopupOpen} setIsStripePopupOpen={setIsStripePopupOpen}  buy={buyCrypto} isPopupOpen={isPopupOpen} setIsPopupOpen={setIsPopupOpen} popup={popup}/>
+      <StripePopup isStripePopupOpen={isStripePopupOpen} setIsStripePopupOpen={setIsStripePopupOpen} stripePromise={stripePromise} clientSecret={clientSecret}/>
 
       {!isLoading ?
       <>

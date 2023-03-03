@@ -10,6 +10,7 @@
     "@rainbow-me/rainbowkit": "^0.8.1",
     "@reduxjs/toolkit": "^1.8.3",
     "@stripe/react-stripe-js": "^1.16.4",
+    "@stripe/stripe-js": "^1.48.0",
     "@tailwindcss/aspect-ratio": "^0.4.0",
     "@tailwindcss/forms": "^0.5.2",
     "@tailwindcss/line-clamp": "^0.4.0",
@@ -83,6 +84,7 @@
     ]
   },
   "devDependencies": {
+    "@iconify/react": "^4.1.0",
     "@types/lodash.merge": "^4.6.7",
     "@types/react-blockies": "^1.4.1",
     "@types/react-csv": "^1.1.3",

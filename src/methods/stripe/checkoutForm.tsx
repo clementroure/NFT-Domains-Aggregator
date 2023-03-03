@@ -63,6 +63,7 @@ const CheckoutForm = (props: any) => {
     <form onSubmit={(e) => handleSubmit(e)}>
       <PaymentElement />
       <button className="bg-gray-800 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded mt-6 shadow" disabled={!stripe}>Submit</button>
+      <button onClick={() => props.setIsStripePopupOpen(false)} className="bg-gray-800 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded mt-6 shadow" disabled={!stripe}>Cancel</button>
       {errorMessage && <div className='text-red-400 mt-4 text-sm'>{errorMessage}</div>}
     </form>
   )
