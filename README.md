@@ -1,5 +1,4 @@
-# nft_domains_aggregator
-Blockchain Domain Names Aggregator - ENS and Unstoppable Domains
+# Blockchain Domain Names Aggregator - ENS and Unstoppable Domains
 
 Secure your brand, buy NFT Domains ⬇️
 
