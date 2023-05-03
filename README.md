@@ -1,11 +1,17 @@
 # Blockchain Domain Names Aggregator - ENS and Unstoppable Domains
 
-<img src="https://user-images.githubusercontent.com/13381610/235974986-8e73d1a7-2e19-4fdb-ac0d-fa4b878fafa2.png" width="600">
+<img src="https://user-images.githubusercontent.com/13381610/235974986-8e73d1a7-2e19-4fdb-ac0d-fa4b878fafa2.png" width="1000">
 
-<img src="https://user-images.githubusercontent.com/13381610/235975531-7ff5b571-db0a-4a48-b446-d32fce478890.png" width="600">
+## Project Architecture
 
-<img src="https://user-images.githubusercontent.com/13381610/235974920-e15c61c1-c6cb-43f6-b32b-9bbe8091c8ae.png" width="600">
-<img src="https://user-images.githubusercontent.com/13381610/235974930-d34438cc-48da-48db-972b-b35d808f4d17.png" width="600">
+<img src="https://user-images.githubusercontent.com/13381610/235975531-7ff5b571-db0a-4a48-b446-d32fce478890.png" width="1000">
+
+## Desktop
+
+<img src="https://user-images.githubusercontent.com/13381610/235974920-e15c61c1-c6cb-43f6-b32b-9bbe8091c8ae.png" width="800">
+<img src="https://user-images.githubusercontent.com/13381610/235974930-d34438cc-48da-48db-972b-b35d808f4d17.png" width="800">
+
+## Resume
 
 Secure your brand, buy NFT Domains ⬇️
 
