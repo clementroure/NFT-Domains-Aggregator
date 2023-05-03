@@ -8,8 +8,8 @@
 
 ## Desktop
 
-<img src="https://user-images.githubusercontent.com/13381610/235974920-e15c61c1-c6cb-43f6-b32b-9bbe8091c8ae.png" width="800">
-<img src="https://user-images.githubusercontent.com/13381610/235974930-d34438cc-48da-48db-972b-b35d808f4d17.png" width="800">
+<img src="https://user-images.githubusercontent.com/13381610/235974920-e15c61c1-c6cb-43f6-b32b-9bbe8091c8ae.png" width="600">
+<img src="https://user-images.githubusercontent.com/13381610/235974930-d34438cc-48da-48db-972b-b35d808f4d17.png" width="600">
 
 ## Resume
 
